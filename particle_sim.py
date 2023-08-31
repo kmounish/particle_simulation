@@ -6,10 +6,12 @@ import numpy as np
 from particle import Particle
 
 # TODO:
-# Maybe more: where it slides of to the side like sand or water
+# Maybe more: where it slides of to the side like sand or water - need to fix
+# Maybe add different type of particles : bouncy and water perhaps
 
 # Pre-setup
 pygame.init()
+#TODO:Should make it more dynamic
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
