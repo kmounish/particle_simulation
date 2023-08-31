@@ -11,6 +11,7 @@ class Particle:
         return (self.x, self.y)
 
     def update_pos(self, *args):
+        # TODO:Should make it more dynamic, window size
         if len(args) == 0:
             if self.y > 720:
                 self.y = 720
