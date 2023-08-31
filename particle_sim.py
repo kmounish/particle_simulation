@@ -8,6 +8,7 @@ from particle import Particle
 # TODO:
 # Maybe more: where it slides of to the side like sand or water
 
+# Pre-setup
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
@@ -15,8 +16,10 @@ running = True
 parts = []
 time = 0
 id = 0
+
+
 while running:
-    # Set up:
+    # Set up for simulation:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -31,45 +34,38 @@ while running:
 
     # falling simulation:
     for x in parts:
-        # test = True
         right = True
         left = True
         down = True
+        notsame = True
         x.update_velocity(current_time-time)
         for y in parts:
+            # Checks for particle collision
+            # TODO: Might have to make this a range - giving issues with exact values i think
             check_left = (x.get_pos()[0]-y.size,
-                          x.get_pos()[1]-y.size) == y.get_pos()
+                          x.get_pos()[1]+y.size) == y.get_pos()
             check_right = (x.get_pos()[0]+y.size,
-                           x.get_pos()[1]-y.size) == y.get_pos()
+                           x.get_pos()[1]+y.size) == y.get_pos()
             check_down = (x.get_pos()[0],
                           x.get_pos()[1]+y.size) == y.get_pos()
+            same = x.get_pos() == y.get_pos()
+            id_test = x.id is not y.id
 
-            # test_1 = x.get_pos() == y.get_pos() and x.id is not y.id
-            # test_2 = (x.get_pos()[0], x.get_pos()[1]+y.size) == y.get_pos()
-            # test_3 = (x.get_pos()[0]+y.size,
-            #           x.get_pos()[1]+y.size) != y.get_pos()
-
-            if check_left:
+            if same and id_test:
+                notsame = False
+            if check_left and id_test:
                 left = False
-            if check_right:
+            if check_right and id_test:
                 right = False
-            if check_down:
+            if check_down and id_test:
                 down = False
-            # if x.get_pos() == y.get_pos() and x.id is not y.id:
-            #     test = False
-            #     x.update_pos(x.get_pos(), y.size)
-            #     break
-            # elif test_2:
-            #     test = False
-            #     break
-            # elif test_3:
-            #     test = False
-            #     x.update_pos(x.get_pos(), y.size, "left")
-        # if test:
-        #     x.update_pos()
-        if not check_down and check_left and not check_right:
+
+        # update particles based on collision
+        if not notsame:
+            x.update_pos(x.get_pos(), x.size)
+        elif not down and left:
             x.update_pos(x.get_pos(), x.size, "left")
-        elif not check_down and not check_left and check_right:
+        elif not down and not left and right:
             x.update_pos(x.get_pos(), x.size, "right")
         else:
             x.update_pos()
@@ -78,6 +74,6 @@ while running:
 
     time = pygame.time.get_ticks()
     pygame.display.flip()
-    clock.tick(30)
+    clock.tick(60)
 
 pygame.quit()
